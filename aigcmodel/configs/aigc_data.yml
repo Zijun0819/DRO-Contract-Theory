@@ -1,0 +1,48 @@
+data:
+    type: "LLdataset"
+    patch_size: 256
+    channels: 3
+    num_workers: 4
+    ckpt_dir: "ckpt\\"
+    eval_dir: "data\\Eval_#50.txt"
+    copy_dir: "data\\eval_baseline"
+    eval_score_save_pth: "data\\eval_#50_score.csv"
+    conditional: True
+
+model:
+    in_channels: 3
+    out_ch: 3
+    ch: 64
+    ch_mult: [1, 2, 3, 4]
+    num_res_blocks: 2
+    dropout: 0.0
+    ema_rate: 0.999
+    ema: True
+    resamp_with_conv: True
+    model_size: L
+
+diffusion:
+    beta_schedule: linear
+    beta_start: 0.0001
+    beta_end: 0.02
+    num_diffusion_timesteps: 200
+    consistency: True
+
+training:
+    batch_size: 8
+    n_epochs: 500
+    validation_freq: 100
+    fl_clients: 4
+    fl_batch_size: 5
+    fl_local_epochs: 1
+    t_method: Server
+    min_loss: 0.9
+
+optim:
+    weight_decay: 0.000
+    optimizer: "Adam"
+    lr: 0.0001
+    amsgrad: False
+    eps: 0.00000001
+    step_size: 50
+    gamma: 0.8

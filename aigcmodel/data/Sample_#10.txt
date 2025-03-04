@@ -1,0 +1,10 @@
+data\low_light\Bulldozer_41.png
+data\low_light\Bulldozer_198.png
+data\low_light\Crane_373.png
+data\low_light\Crane_351.png
+data\low_light\Excavator_499.png
+data\low_light\Excavator_117.png
+data\low_light\Excavator_07.png
+data\low_light\Excavator_155.png
+data\low_light\Truck_342.png
+data\low_light\Truck_275.png
