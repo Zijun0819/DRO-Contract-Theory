@@ -29,7 +29,7 @@ def identify_dro_lr(config, args, hat_xi, L_step_size, dro_model, console=False)
     print(f"The BCD algorithm converged at {it_converge} rounds => lam={lam}, L={L}")
     if console:
         L_list = [item for ind, item in enumerate(L_list) if ind % 10 == 0]
-        save_to_csv(L_list, filename="results/identify_dro_lr_L_list_100.csv")
+        save_to_csv(L_list, filename="results/identify_dro_lr_L_list.csv")
 
     return dro_contract_model
 

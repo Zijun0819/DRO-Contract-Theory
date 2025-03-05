@@ -23,7 +23,6 @@ def get_contracts(config, args, zero_fill=False, cnt_zero_fill=50):
         hat_xi = malicious_zero_data_fill(hat_xi, cnt_zero_fill)
     L_step_size = np.float64(config.bcd.L_step_size)
     dro_model = DROModel(config)
-    contract_model = ContractModel(config, args)
     dro_contract_model = ContractModel(config, args)
     sp_contract_model = ContractModel(config, args)
     ro_contract_model = ContractModel(config, args)
@@ -48,7 +47,7 @@ def get_contracts(config, args, zero_fill=False, cnt_zero_fill=50):
     sp_contract_model.L = latency_calc(L_init, config, args, hat_xi)
     sp_contract_model.reward_calc()
 
-    contract_model_list = [contract_model, dro_contract_model, sp_contract_model, ro_contract_model, drl_contract_model]
+    contract_model_list = [dro_contract_model, sp_contract_model, ro_contract_model, drl_contract_model]
 
     return contract_model_list
 

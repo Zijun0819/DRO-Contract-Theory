@@ -46,4 +46,4 @@ if __name__ == '__main__':
     # identify_dro_optimal_beta(config, args)
 
     ''' Run the comparison code with benchmarks traditional_contract, sp_contract, ro_contract, drl_contract '''
-    run_comparison(config, args, zero_fill=False, cnt_zero_fill=50)
+    run_comparison(config, args, zero_fill=True, cnt_zero_fill=150)
