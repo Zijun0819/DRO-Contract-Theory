@@ -2,7 +2,8 @@ import argparse
 import csv
 
 from comparison.eval_dro_contract import identify_dro_optimal_lr, identify_dro_lr, identify_dro_optimal_n, \
-    identify_dro_optimal_beta
+    identify_dro_optimal_beta, identify_dro_scalability, identify_dro_alpha_sensitivity, \
+    identify_dro_diameter_sensitivity, identify_dro_gammas_sensitivity
 from comparison.comparison_dro_contract import run_comparison, malicious_zero_data_fill
 from utils.tools import read_configs, obtain_sample_points, data_score_trans, \
     print_contract_info, avg_contract_performance, generate_sampled_data, save_to_csv, get_train_data
@@ -45,5 +46,16 @@ if __name__ == '__main__':
     ''' Identify the optimal DRO confidence level beta in the range of [0.8, 0.85, 0.9, 0.95, 0.99] '''
     # identify_dro_optimal_beta(config, args)
 
+    ''' Identify the scalability of DRO confidence with contract lengths of [8, 16, 32, 48] '''
+    # identify_dro_scalability(config, args)
+    ''' Identify the sensitivity of DRO by varying distribution of ASP types  '''
+    # identify_dro_alpha_sensitivity(config, args)
+    ''' Identify the sensitivity of DRO by varying Wasserstein diameters of [20, 40, 60, 80] '''
+    # identify_dro_diameter_sensitivity(config, args)
+    '''Identify the sensitivity of DRO by varying coefficients (gamma1, gamma2, gamma3) of [(0.1, 10, 1), (1, 1, 10), 
+    (1, 1, 1)]'''
+    identify_dro_gammas_sensitivity(config, args)
     ''' Run the comparison code with benchmarks traditional_contract, sp_contract, ro_contract, drl_contract '''
-    run_comparison(config, args, zero_fill=True, cnt_zero_fill=150)
+    # run_comparison(config, args, zero_fill=False, cnt_zero_fill=0)
+
+

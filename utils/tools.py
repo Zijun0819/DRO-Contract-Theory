@@ -63,6 +63,13 @@ def data_score_trans(data_list, minus_term=0):
 
 
 def save_to_csv(data, filename):
+    # Extract the directory from the filename
+    directory = os.path.dirname(filename)
+
+    # Check if the directory exists, if not, create it
+    if directory and not os.path.exists(directory):
+        os.makedirs(directory)
+
     with open(filename, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerows(data)  # 按列写入

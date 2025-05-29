@@ -25,9 +25,11 @@ class MyEnv(gym.Env):
         random.seed(args.seed)
         self.reward_history = []  # 用于存储历史 reward
         self.window_size = 100  # 统计最近 100 轮数据
+        len_contract = len(config.contract.theta_)
+        dirichlet_beta = [1 for _ in range(len_contract)]
 
-        self.L = np.zeros(config.contract.len_contract)
-        self.R = np.zeros(config.contract.len_contract)
+        self.L = np.zeros(len_contract)
+        self.R = np.zeros(len_contract)
         self.gamma1 = config.model.gamma1
         self.gamma2 = config.model.gamma2
         self.gamma3 = config.model.gamma3
@@ -35,10 +37,10 @@ class MyEnv(gym.Env):
         self.xi_ = np.array(xi_hat)
         self.pre_reward = 0
 
-        self.ncb = config.contract.len_contract
+        self.ncb = len_contract
         self.action_bound = 1
         self.theta_list = np.array(config.contract.theta_)
-        self.alpha_list = np.array(np.random.dirichlet(config.contract.dirichlet_beta))
+        self.alpha_list = np.array(np.random.dirichlet(dirichlet_beta))
         self.max_reward = -np.inf
 
         self.action_space = spaces.Box(
@@ -153,12 +155,12 @@ def drl_contract(config, args, xi_hat, learn_steps, load):
     load = load
 
     if load:
-        model = PPO.load("checkpoints/ppo_contract", env=env)
+        model = PPO.load(f"checkpoints/ppo_contract_{len(config.contract.theta_)}", env=env)
     else:
         # 初始化 PPO 模型
         model = PPO("MlpPolicy", env, verbose=1)
 
-        save_path = "checkpoints/ppo_contract"
+        save_path = f"checkpoints/ppo_contract_{len(config.contract.theta_)}"
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
         # 训练 10 万步

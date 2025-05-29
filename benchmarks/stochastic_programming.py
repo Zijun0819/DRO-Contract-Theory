@@ -10,9 +10,8 @@ def latency_calc(L_initial, config, args, xi_hat):
     gamma1 = config.model.gamma1
     gamma2 = config.model.gamma2
     gamma3 = config.model.gamma3
-    alpha_ = np.random.dirichlet(config.contract.dirichlet_beta)
     theta_ = config.contract.theta_
-    len_contract = config.contract.len_contract
+    len_contract = len(config.contract.theta_)
     N = config.dro.sample_cnt
     # N = config.data.size
     xi_hat = np.asarray(xi_hat)

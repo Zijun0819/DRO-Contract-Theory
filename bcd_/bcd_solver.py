@@ -127,6 +127,7 @@ def bcd_solver(
     xi_final = None
     it_converge = 0
     L_list = list()
+    obj_list = list()
     L_list.append(L)
 
     # Evaluate initial objective
@@ -194,6 +195,7 @@ def bcd_solver(
         # Optionally, print progress
         if console_mode:
             print(f"Iter {it}: Obj = {obj_new:.4f}, lam = {lam:.4f}, L = {L}")
+            obj_list.append(round(obj_new, 4))
             L_list.append([round(item, 4) for item in L])
 
-    return it_converge, L_final, lam_final, xi_final, L_list
+    return it_converge, L_final, lam_final, xi_final, L_list, obj_list

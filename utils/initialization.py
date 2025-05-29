@@ -6,14 +6,16 @@ class ContractModel:
     def __init__(self, config, args):
         np.random.seed(args.seed)
         random.seed(args.seed)
-        self.L = np.zeros(config.contract.len_contract)
-        self.R = np.zeros(config.contract.len_contract)
+        len_contract = len(config.contract.theta_)
+        dirichlet_beta = [1 for _ in range(len_contract)]
+        self.L = np.zeros(len_contract)
+        self.R = np.zeros(len_contract)
         self.gamma1 = config.model.gamma1
         self.gamma2 = config.model.gamma2
         self.gamma3 = config.model.gamma3
         self.sigma = config.model.sigma
         self.theta_ = np.asarray(config.contract.theta_)
-        self.alpha_ = np.asarray(np.random.dirichlet(config.contract.dirichlet_beta))
+        self.alpha_ = np.asarray(np.random.dirichlet(dirichlet_beta))
         self.xi = config.model.xi
 
         self.latency_calc()
