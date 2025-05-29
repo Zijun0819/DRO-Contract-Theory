@@ -23,8 +23,8 @@ class MyEnv(gym.Env):
         super(MyEnv, self).__init__()
         np.random.seed(args.seed)
         random.seed(args.seed)
-        self.reward_history = []  # 用于存储历史 reward
-        self.window_size = 100  # 统计最近 100 轮数据
+        self.reward_history = []  # Store the historical reward
+        self.window_size = 100  # Statistics for the last 100 rounds of data
         len_contract = len(config.contract.theta_)
         dirichlet_beta = [1 for _ in range(len_contract)]
 
@@ -47,7 +47,7 @@ class MyEnv(gym.Env):
             low=-self.action_bound, high=self.action_bound, shape=(self.ncb,), dtype=np.float32
         )
 
-        # 定义 observation space（state space: including previous and current latency term in the contract,
+        # Define observation space（state space: including previous and current latency term in the contract,
         # as well IR constraints keeping or breaking status）
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(self.ncb,), dtype=np.float32
@@ -69,20 +69,20 @@ class MyEnv(gym.Env):
         return pi_o
 
     def count_fit_ir(self):
-        """计算符合 IR 约束的合同数"""
+        """Calculate the number of contracts that meet IR constraints"""
         ir_record = np.where(self.asp_i_utility() >= 0, 1, 0)
         return ir_record
 
     def normalize_reward(self, reward):
         self.reward_history.append(reward)
         if len(self.reward_history) > self.window_size:
-            self.reward_history.pop(0)  # 维持固定长度
+            self.reward_history.pop(0)  # Maintain a fixed length
 
         R_min, R_max = min(self.reward_history), max(self.reward_history)
         if R_max > R_min:
             reward_norm = (reward - R_min) / (R_max - R_min)
         else:
-            reward_norm = 0  # 如果 R_max == R_min，避免除 0 错误
+            reward_norm = 0  # If R_max == R_min, avoid division by zero errors.
         return np.clip(reward_norm, 0, 1)
 
     def env_reward_calc(self):
@@ -91,24 +91,24 @@ class MyEnv(gym.Env):
         return reward
 
     def enforce_monotonicity(self):
-        # 按 L 从小到大排序，同时调整 R 保持对应关系
+        # Sort L from smallest to largest, while adjusting R to maintain the correspondence.
         sort_idx = np.argsort(self.L)
         self.L = self.L[sort_idx]
         self.R = self.R[sort_idx]
 
     def step(self, action):
-        """执行一个动作，返回 (obs, reward, done, truncated, info)"""
+        """Do an action，return (obs, reward, done, truncated, info)"""
         action_vector = action
 
-        # 计算新的合同向量
+        # Calculate the new contract vector
         self.L = self.L * (1 + action_vector)
 
-        # 处理合同限制（确保价格和工资在合理范围内）
+        # Handling contract restrictions (ensuring that prices and wages are within reasonable limits)
         self.L = np.clip(self.L, 1, 1000)
         self.reward_calc()
         self.enforce_monotonicity()
 
-        # 计算新的状态
+        # Calculate the new state
         next_state = self.L
 
         # Take the IR constraints into the reward calculation
@@ -120,7 +120,7 @@ class MyEnv(gym.Env):
 
         self.pre_reward = cur_reward
 
-        # `done` 设置为 False（合同优化问题通常是持续任务）
+        # Set `done` as False (Contract optimization issues are usually ongoing tasks.)
         done = False
         truncated = False
         info = {}
@@ -128,7 +128,7 @@ class MyEnv(gym.Env):
         return next_state, reward, done, truncated, info
 
     def reset(self, seed=None, options=None):
-        """重置环境，返回 (obs, info)"""
+        """Reset the environment，return (obs, info)"""
         super().reset(seed=seed)
         self.L = np.random.uniform(1, 1000.0, self.ncb)
         self.reward_calc()
@@ -142,7 +142,6 @@ class MyEnv(gym.Env):
         return initial_state, info
 
     def render(self):
-        """可选：打印当前合同情况"""
         print(f"Current Contract Vector: {self.L} + {self.R}")
 
 
@@ -157,18 +156,18 @@ def drl_contract(config, args, xi_hat, learn_steps, load):
     if load:
         model = PPO.load(f"checkpoints/ppo_contract_{len(config.contract.theta_)}", env=env)
     else:
-        # 初始化 PPO 模型
+        # Initialize the PPO model
         model = PPO("MlpPolicy", env, verbose=1)
 
         save_path = f"checkpoints/ppo_contract_{len(config.contract.theta_)}"
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
-        # 训练 10 万步
+        # Training the ppo model for 100,000 steps
         model.learn(total_timesteps=learn_steps)
         model.save(save_path)
         print(f"maximum reward is + {env.max_reward}")
 
-    # 评估训练效果
+    # Evaluation
     obs, _ = env.reset()
     for _ in range(int(1e4)):
         torch.manual_seed(args.seed)
